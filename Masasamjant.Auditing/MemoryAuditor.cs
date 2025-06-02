@@ -3,16 +3,28 @@ using System.Collections.Concurrent;
 
 namespace Masasamjant.Auditing
 {
+    /// <summary>
+    /// Represents an in-memory auditor that stores auditing events in memory.
+    /// </summary>
     public sealed class MemoryAuditor : Auditor
     {
         private readonly ConcurrentQueue<AuditingEvent> events;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemoryAuditor"/> class with the specified configuration.
+        /// </summary>
+        /// <param name="configuration">The <see cref="AuditorConfiguration"/>.</param>
         public MemoryAuditor(AuditorConfiguration configuration)
             : base(configuration)
         {
             events = new ConcurrentQueue<AuditingEvent>();
         }
 
+        /// <summary>
+        /// Gets auditing events based on the specified search request.
+        /// </summary>
+        /// <param name="request">The <see cref="AuditingEventSearchRequest"/>.</param>
+        /// <returns>A found auditing events.</returns>
         public override Task<IEnumerable<AuditingEvent>> SearchEventsAsync(AuditingEventSearchRequest request)
         {
             var events = GetAuditingEvents().AsQueryable();

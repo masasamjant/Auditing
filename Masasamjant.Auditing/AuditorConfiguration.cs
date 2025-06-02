@@ -7,77 +7,68 @@ namespace Masasamjant.Auditing
     /// </summary>
     public class AuditorConfiguration
     {
-        private readonly IConfiguration configuration;
-        private IConfigurationSection? auditorSection;
-        private readonly string auditorSectionName;
-
         /// <summary>
         /// Default value of <see cref="AuditingTimeoutMilliseconds"/>.
         /// </summary>
         public const int DefaultAuditingTimeoutMilliseconds = 5000;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuditorConfiguration"/> class.
+        /// Initializes a new instance of the <see cref="AuditorConfiguration"/> class that reads configuration 
+        /// from the specified <see cref="IConfiguration"/>.
         /// </summary>
         /// <param name="configuration">The <see cref="IConfiguration"/>.</param>
         /// <param name="auditorSectionName">The name of auditor configuration section.</param>
         public AuditorConfiguration(IConfiguration configuration, string auditorSectionName)
         {
-            this.configuration = configuration;
-            this.auditorSectionName = auditorSectionName;
+            var section = configuration.GetRequiredSection(auditorSectionName);
+            ExcludedTypes = GetExcludedTypes(section);
+            AuditingTimeoutMilliseconds = GetAuditingTimeoutMilliseconds(section);
         }
 
         /// <summary>
-        /// Gets full name of types that should not be audited.
+        /// Initializes a new instance of the <see cref="AuditorConfiguration"/> class with specified values.
         /// </summary>
-        public IEnumerable<string> ExcludedTypes
+        /// <param name="excludedTypes">The full name of types that should not be audited.</param>
+        /// <param name="auditingTimeoutMilliseconds">The milliseconds timeout for how oftern auditing events are stored.</param>
+        public AuditorConfiguration(IEnumerable<string> excludedTypes, double auditingTimeoutMilliseconds)
         {
-            get
+            ExcludedTypes = excludedTypes;
+            AuditingTimeoutMilliseconds = auditingTimeoutMilliseconds > 0D ? auditingTimeoutMilliseconds : DefaultAuditingTimeoutMilliseconds;
+        }
+
+        /// <summary>
+        /// Gets the full name of types that should not be audited.
+        /// </summary>
+        public IEnumerable<string> ExcludedTypes { get; }
+
+        /// <summary>
+        /// Gets the milliseconds timeout for how oftern auditing events are stored. Default value is 5000 milliseconds.
+        /// </summary>
+        public double AuditingTimeoutMilliseconds { get; }
+
+        private static string[] GetExcludedTypes(IConfigurationSection section)
+        {
+            var value = section[nameof(ExcludedTypes)];
+
+            if (string.IsNullOrWhiteSpace(value))
+                return [];
+
+            if (value.Contains(','))
             {
-                var value = AuditorSection[nameof(ExcludedTypes)];
-
-                if (string.IsNullOrWhiteSpace(value))
-                    return [];
-
-                if (value.Contains(','))
-                {
-                    return value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                }
-                else
-                {
-                    return [value];
-                }
+                return value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            }
+            else
+            {
+                return [value];
             }
         }
 
-        /// <summary>
-        /// Gets milliseconds timeout for how oftern auditing events are stored. Default value is 5000 milliseconds.
-        /// </summary>
-        public double AuditingTimeoutMilliseconds
+        private static double GetAuditingTimeoutMilliseconds(IConfigurationSection section)
         {
-            get
-            {
-                var value = AuditorSection[nameof(AuditingTimeoutMilliseconds)];
-
-                if (string.IsNullOrWhiteSpace(value))
-                    return DefaultAuditingTimeoutMilliseconds;
-
-                if (double.TryParse(value, out var result) && result > 0D)
-                    return result;
-
+            var value = section[nameof(AuditingTimeoutMilliseconds)];
+            if (string.IsNullOrWhiteSpace(value))
                 return DefaultAuditingTimeoutMilliseconds;
-            }
-        }
-
-        private IConfigurationSection AuditorSection
-        {
-            get
-            {
-                if (auditorSection == null)
-                    auditorSection = configuration.GetRequiredSection(auditorSectionName);
-
-                return auditorSection;
-            }
+            return double.TryParse(value, out var result) && result > 0D ? result : DefaultAuditingTimeoutMilliseconds;
         }
     }
 }
