@@ -14,7 +14,7 @@
     public interface IProvideAuditingEvent
     {
         /// <summary>
-        /// Notifies when performed application action should be audited.
+        /// Notifies when performed action should be audited.
         /// </summary>
         event AsyncAuditingEventHandler? Audit;
     }
