@@ -1,0 +1,90 @@
+﻿@using Masasamjant.Auditing
+@model AuditingEvent
+@{
+    ViewData["Title"] = "Auditing Event";
+}
+<article id="auditing-event-details">
+    <section id="auditing-event-action">
+        <div>
+            <label>Application:</label>
+            <span>@Model.Action.ApplicationName</span>
+        </div>
+        <div>
+            <label>Action:</label>
+            <span>
+                @if (Model.Action.ActionType == AuditingActionType.Other)
+                {
+                    if (string.IsNullOrWhiteSpace(Model.Action.ActionName))
+                    {
+                        @Model.Action.ActionType
+                    }
+                    else
+                    {
+                        @Model.Action.ActionName   
+                    }
+                }
+                else
+                {
+                    @Model.Action.ActionType    
+                }
+            </span>
+        </div>
+        <div>
+            <label>Time:</label>
+            <span>@Model.Action.ActionTime</span>
+        </div>
+        <div>
+            <label>Result:</label>
+            <span>
+                @if (Model.Action.ActionResult == AuditingActionResult.Faulted)
+                {
+                    @(string.IsNullOrWhiteSpace(Model.Action.FaultedMessage) ? Model.Action.ActionResult.ToString() : $"{Model.Action.ActionResult}: {Model.Action.FaultedMessage}")
+                }
+                else
+                {
+                    @Model.Action.ActionResult   
+                }
+            </span>
+        </div>
+    </section>
+    <section id="auditing-event-user">
+        @if (Model.User.IsAnonymous)
+        {
+            <div>Anonymous User</div>
+        }
+        else
+        {
+            <div>
+                <label>Type:</label>
+                <span>@Model.User.UserType</span>
+            </div>
+            <div>
+                <label>Identifier:</label>
+                <span>@Model.User.UserIdentifier</span>
+            </div>
+            <div>
+                <label>Name:</label>
+                <span>@Model.User.UserName</span>
+            </div>
+        }
+    </section>
+    <section id="audited-objects">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Properties</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.AuditedObjects)
+                {
+                    <tr>
+                        <td>@item.ObjectKey.DisplayName</td>
+                        <td></td>
+                    </tr>    
+                }
+            </tbody>
+        </table>
+    </section>
+</article>

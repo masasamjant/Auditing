@@ -115,6 +115,13 @@ namespace Masasamjant.Auditing.Abstractions
         }
 
         /// <summary>
+        /// Tries to find auditing event with specified identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns>A found auditing event or <c>null</c></returns>
+        public abstract Task<AuditingEvent?> FindEventAsync(Guid identifier);
+
+        /// <summary>
         /// Gets auditing events based on the specified search request.
         /// </summary>
         /// <param name="request">The <see cref="AuditingEventSearchRequest"/>.</param>

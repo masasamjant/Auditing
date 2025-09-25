@@ -25,6 +25,7 @@ namespace Masasamjant.Auditing
 
             TypeName = GetTypeName(instance.GetType());
             Value = CreateKeyValue(TypeName, key);
+            DisplayName = instance.GetType().Name;
         }
 
         /// <summary>
@@ -55,6 +56,12 @@ namespace Masasamjant.Auditing
         /// </summary>
         [JsonInclude]
         public string TypeName { get; internal set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the display name.
+        /// </summary>
+        [JsonInclude]
+        public string DisplayName { get; internal set; } = string.Empty;
 
         /// <summary>
         /// Gets whether or not this represents empty object key.

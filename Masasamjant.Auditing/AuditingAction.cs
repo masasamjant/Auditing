@@ -13,7 +13,7 @@ namespace Masasamjant.Auditing
         /// <param name="applicationName">The application name.</param>
         /// <param name="actionType">The <see cref="AuditingActionType"/>.</param>
         /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
-        /// <param name="actionTime">The time when action occurred.</param>
+        /// <param name="actionTime">The time when action occurred or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
         /// <param name="faultedMessage">The message that descibes why action faulted.</param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="applicationName"/> is empty or only whitespace.
@@ -47,7 +47,7 @@ namespace Masasamjant.Auditing
         /// <param name="applicationName">The application name.</param>
         /// <param name="actionName">The action name.</param>
         /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
-        /// <param name="actionTime">The time when action occurred.</param>
+        /// <param name="actionTime">The time when action occurred or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
         /// <param name="faultedMessage">The message that descibes why action faulted.</param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="applicationName"/> is empty or only whitespace.

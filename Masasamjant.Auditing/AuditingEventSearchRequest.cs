@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Masasamjant.Auditing
 {
@@ -59,6 +60,7 @@ namespace Masasamjant.Auditing
         /// Gets or sets the maximum number of events to return. Default is 2000.
         /// </summary>
         [JsonInclude]
+        [Range(0, 5000)]
         public int? MaxCount { get; set; } = 2000;
 
     }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections;
+using System.Text.Json.Serialization;
 
 namespace Masasamjant.Auditing
 {
@@ -69,5 +70,62 @@ namespace Masasamjant.Auditing
         /// </summary>
         [JsonInclude]
         public List<AuditedObjectDescriptor> AuditedObjects { get; internal set; } = new List<AuditedObjectDescriptor>();
+
+        /// <summary>
+        /// Creates <see cref="AuditingEvent"/> for specified audited object instance.
+        /// </summary>
+        /// <param name="instance">The audited object instance.</param>
+        /// <param name="action">The <see cref="AuditingAction"/>.</param>
+        /// <param name="user">The <see cref="AuditingUser"/>.</param>
+        /// <returns>A <see cref="AuditingEvent"/>.</returns>
+        public static AuditingEvent CreateForOne(object instance, AuditingAction action, AuditingUser user)
+        {
+            return new AuditingEvent(Guid.NewGuid(), action, user, AuditedObjectDescriptor.Create(instance, action.ActionType));
+        }
+
+        /// <summary>
+        /// Creates <see cref="AuditingEvent"/> for specified audited object instance.
+        /// </summary>
+        /// <param name="instance">The audited object instance.</param>
+        /// <param name="applicationName">The application name.</param>
+        /// <param name="actionType">The <see cref="AuditingActionType"/>.</param>
+        /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
+        /// <param name="user">The <see cref="AuditingUser"/>.</param>
+        /// <param name="actionTime">The action time or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
+        /// <param name="faultedMessage">The message that descibes why action faulted.</param>
+        /// <returns>A <see cref="AuditingEvent"/>.</returns>
+        public static AuditingEvent CreateForOne(object instance, string applicationName, AuditingActionType actionType, AuditingActionResult actionResult, AuditingUser user, DateTimeOffset? actionTime = null, string? faultedMessage = null)
+            => CreateForOne(instance, new AuditingAction(applicationName, actionType, actionResult, actionTime, faultedMessage), user);
+
+        /// <summary>
+        /// Creates <see cref="AuditingEvent"/> for specified audited object instances.
+        /// </summary>
+        /// <param name="instances">The audited object instances.</param>
+        /// <param name="action">The <see cref="AuditingAction"/>.</param>
+        /// <param name="user">The <see cref="AuditingUser"/>.</param>
+        /// <returns>A <see cref="AuditingEvent"/>.</returns>
+        public static AuditingEvent CreateForMany(IEnumerable instances, AuditingAction action, AuditingUser user)
+        { 
+            var descriptors = new List<AuditedObjectDescriptor>();
+
+            foreach (var instance in instances)
+                descriptors.Add(AuditedObjectDescriptor.Create(instance, action.ActionType));
+
+            return new AuditingEvent(Guid.NewGuid(), action, user, descriptors);
+        }
+
+        /// <summary>
+        /// Creates <see cref="AuditingEvent"/> for specified audited object instances.
+        /// </summary>
+        /// <param name="instances">The audited object instances.</param>
+        /// <param name="applicationName">The application name.</param>
+        /// <param name="actionType">The <see cref="AuditingActionType"/>.</param>
+        /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
+        /// <param name="user">The <see cref="AuditingUser"/>.</param>
+        /// <param name="actionTime">The action time or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
+        /// <param name="faultedMessage">The message that descibes why action faulted.</param>
+        /// <returns>A <see cref="AuditingEvent"/>.</returns>
+        public static AuditingEvent CreateForMany(IEnumerable instances, string applicationName, AuditingActionType actionType, AuditingActionResult actionResult, AuditingUser user, DateTimeOffset? actionTime = null, string? faultedMessage = null)
+            => CreateForMany(instances, new AuditingAction(applicationName, actionType, actionResult, actionTime, faultedMessage), user);
     }
 }

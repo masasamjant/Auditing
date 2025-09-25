@@ -1,0 +1,18 @@
+﻿@model PersonViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+<section id="add-person">
+    <form method="post" asp-action="Edit" asp-controller="People">
+        <input type="hidden" asp-for="Identifier" />
+        <div class="mb-3">
+            <strong><label asp-for="FirstName">First Name</label></strong>
+            <input type="text" asp-for="FirstName" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="LastName">Last Name</label></strong>
+            <input type="text" asp-for="LastName" class="form-control w-25" />
+        </div>
+        <button type="submit">Save</button>
+    </form>
+</section>

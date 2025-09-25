@@ -1,0 +1,87 @@
+﻿@using Masasamjant.Auditing
+@model AuditingEventSearchViewModel
+@{
+    ViewData["Title"] = "View Auditing Events";
+}
+<section id="search-request">
+    <h1 class="display-4">Auditing Events</h1>
+    <form asp-action="Index" method="post" asp-asp-controller="Auditing">
+        <div class="mb-3">
+            <strong><label asp-for="Request.Application" class="form-label"></label></strong>
+            <input asp-for="Request.Application" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.Actions">Actions:</label></strong>
+            @for (int index = 0; index < Model.AuditingActionSelections.Count; index++)
+            {
+                <span>
+                    <input type="checkbox" asp-for="AuditingActionSelections[index].Selected" />
+                    <label asp-for="AuditingActionSelections[index].Selected">@Model.AuditingActionSelections[index].Text</label>
+                    <input type="hidden" asp-for="AuditingActionSelections[index].Text" />
+                    <input type="hidden" asp-for="AuditingActionSelections[index].Value" />
+                </span>    
+            }
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.Results">Results:</label></strong>
+            @for (int index = 0; index < Model.AuditingActionResultSelections.Count; index++)
+            {
+                <span>
+                    <input type="checkbox" asp-for="AuditingActionResultSelections[index].Selected" />
+                    <label asp-for="AuditingActionResultSelections[index].Selected">@Model.AuditingActionResultSelections[index].Text</label>
+                    <input type="hidden" asp-for="AuditingActionResultSelections[index].Text" />
+                    <input type="hidden" asp-for="AuditingActionResultSelections[index].Value" />
+                </span>
+            }
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.ActionName">Action Name</label></strong>
+            <input type="text" asp-for="Request.ActionName" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.CreatedFrom">Created From</label></strong>
+            <input type="date" asp-for="Request.CreatedFrom" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.CreatedTo">Created To</label></strong>
+            <input type="date" asp-for="Request.CreatedTo" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.UserName">User</label></strong>
+            <input type="text" asp-for="Request.UserName" class="form-control w-25" />
+        </div>
+        <div class="mb-3">
+            <strong><label asp-for="Request.MaxCount">Max Result Count</label></strong>
+            <input type="number" asp-for="Request.MaxCount" min="0" max="5000" class="form-control w-25" />
+        </div>
+        <input type="submit" value="Search" />
+    </form>
+</section>
+<section id="search-result">
+    @if (Model.Result.Count > 0)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Application</th>
+                    <th>Result</th>
+                    <th>Time</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Result)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-controller="Auditing" asp-route-identifier="@item.Identifier">@item.Action.ActionType</a></td>
+                        <td>@item.Action.ApplicationName</td>
+                        <td>@item.Action.ActionResult</td>
+                        <td>@item.Action.ActionTime</td>
+                        <td>@item.User.UserName</td>
+                    </tr>    
+                }
+            </tbody>
+        </table>    
+    }
+</section>

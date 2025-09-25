@@ -6,7 +6,14 @@
     public interface IAuditingEventSource
     {
         /// <summary>
-        /// Gets auditing events based on the specified search request.
+        /// Tries to find auditing event with specified identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns>A found auditing event or <c>null</c></returns>
+        Task<AuditingEvent?> FindEventAsync(Guid identifier);
+
+        /// <summary>
+        /// Search auditing events based on the specified search request.
         /// </summary>
         /// <param name="request">The <see cref="AuditingEventSearchRequest"/>.</param>
         /// <returns>A found auditing events.</returns>

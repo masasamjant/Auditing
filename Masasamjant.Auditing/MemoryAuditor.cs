@@ -21,7 +21,19 @@ namespace Masasamjant.Auditing
         }
 
         /// <summary>
-        /// Gets auditing events based on the specified search request.
+        /// Tries to find auditing event with specified identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier.</param>
+        /// <returns>A found auditing event or <c>null</c></returns>
+        public override Task<AuditingEvent?> FindEventAsync(Guid identifier)
+        {
+            var events = GetAuditingEvents();
+            var auditingEvent = events.Where(x => x.Identifier == identifier).FirstOrDefault();
+            return Task.FromResult(auditingEvent);
+        }
+
+        /// <summary>
+        /// Search auditing events based on the specified search request.
         /// </summary>
         /// <param name="request">The <see cref="AuditingEventSearchRequest"/>.</param>
         /// <returns>A found auditing events.</returns>

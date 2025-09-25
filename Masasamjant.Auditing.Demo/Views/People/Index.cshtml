@@ -1,0 +1,33 @@
+﻿@model IEnumerable<PersonViewModel>
+@{
+    ViewData["Title"] = "People";
+}
+<section id="people-commands">
+    <a asp-action="Add" asp-controller="People">Add</a>
+</section>
+<section id="people-list">
+    <table>
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-controller="People" asp-route-identifier="@item.Identifier">@item.FirstName</a></td>
+                    <td>@item.LastName</td>
+                    <td>
+                        <form asp-action="Remove" asp-controller="People" method="post">
+                            <input type="hidden" name="identifier" value="@item.Identifier" />
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>    
+            }
+        </tbody>
+    </table>
+</section>

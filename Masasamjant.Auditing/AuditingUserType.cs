@@ -6,7 +6,8 @@
     public enum AuditingUserType : int
     {
         /// <summary>
-        /// Type of user is not defined or unknown.
+        /// Type of user is not defined or unknown. 
+        /// This should be user when it is not clear if user is human or system.
         /// </summary>
         Unknown = 0,
 
@@ -18,6 +19,6 @@
         /// <summary>
         /// User is an application or service account.
         /// </summary>
-        Application = 2
+        System = 2
     }
 }
