@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Masasamjant.Auditing.Abstractions;
+using Masasamjant.Security;
 
 namespace Masasamjant.Auditing
 {
@@ -9,22 +10,23 @@ namespace Masasamjant.Auditing
     /// Represents key of the audited object instance. Requires that audited object either implements <see cref="IProvideAuditingKeys"/> interface 
     /// or has properties indicated by <see cref="AuditedPropertyAttribute"/> as key properties.
     /// </summary>
-    public class AuditedObjectKey
+    public class AuditedObjectKey : IEquatable<AuditedObjectKey>
     {
         /// <summary>
         /// Initializes new instance of the <see cref="AuditedObjectKey"/> class with specified object instance.
         /// </summary>
         /// <param name="instance">The audited object instance.</param>
-        /// <exception cref="ArgumentException">If <paramref name="instance"/> does not have any key properties for auditing.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="instance"/> does not have any audited key properties or it does not implement <see cref="IProvideAuditingKeys"/>.</exception>
         public AuditedObjectKey(object instance)
         {
             var key = GetKey(instance);
 
             if (!key.Any())
-                throw new ArgumentException("The specified instance does not have any key properties.", nameof(instance));
+                throw new ArgumentException($"The specified instance does not have any audited key properties or does not implement '{typeof(IProvideAuditingKeys)}'.", nameof(instance));
 
             TypeName = GetTypeName(instance.GetType());
-            Value = CreateKeyValue(TypeName, key);
+            TypeKey = GetTypeKey(key);
+            Value = CreateKeyValue(TypeName, TypeKey);
             DisplayName = instance.GetType().Name;
         }
 
@@ -39,10 +41,15 @@ namespace Masasamjant.Auditing
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="typeName">The type name.</param>
-        protected AuditedObjectKey(string value, string typeName) 
+        /// <param name="typeKey">The type key.</param>
+        /// <param name="displayName">The display name.</param>
+        /// <remarks>If value of <paramref name="displayName"/> is <c>null</c>, empty or only whitespace, then uses <paramref name="typeName"/> as display name.</remarks>
+        protected AuditedObjectKey(string value, string typeName, string typeKey, string? displayName = null) 
         {
             Value = value;
             TypeName = typeName;
+            TypeKey = typeKey;
+            DisplayName = string.IsNullOrWhiteSpace(displayName) ? typeName : displayName;
         }
 
         /// <summary>
@@ -58,6 +65,12 @@ namespace Masasamjant.Auditing
         public string TypeName { get; internal set; } = string.Empty;
 
         /// <summary>
+        /// Gets the type key as string.
+        /// </summary>
+        [JsonInclude]
+        public string TypeKey { get; internal set; } = string.Empty;
+
+        /// <summary>
         /// Gets the display name.
         /// </summary>
         [JsonInclude]
@@ -70,6 +83,52 @@ namespace Masasamjant.Auditing
         public bool IsEmpty
         {
             get { return string.IsNullOrWhiteSpace(Value) || string.IsNullOrWhiteSpace(TypeName); }
+        }
+
+        /// <summary>
+        /// Check if other audited key is equal to this. Meaning <paramref name="other"/> and <c>this</c> has same value.
+        /// </summary>
+        /// <param name="other">The other audited key.</param>
+        /// <returns><c>true</c> if <paramref name="other"/> has same value as this has; <c>false</c> otherwise.</returns>
+        public bool Equals(AuditedObjectKey? other)
+        {
+            return other != null && string.Equals(Value, other.Value, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Check if object instance is <see cref="AuditedObjectKey"/> and equal to this.
+        /// </summary>
+        /// <param name="obj">The object instance.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> is <see cref="AuditedObjectKey"/> and equal to this; <c>false</c> otherwise.</returns>
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as AuditedObjectKey);
+        }
+
+        /// <summary>
+        /// Gets hash code value.
+        /// </summary>
+        /// <returns>A hash code.</returns>
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
+        /// <summary>
+        /// Gets string representation.
+        /// </summary>
+        /// <returns>A string representation.</returns>
+        public override string ToString()
+        {
+            var name = string.IsNullOrWhiteSpace(DisplayName) ? TypeName : DisplayName;
+            
+            if (string.IsNullOrWhiteSpace(name))
+                return string.Empty;
+
+            if (string.IsNullOrWhiteSpace(TypeKey))
+                return name;
+
+            return $"{name} {TypeKey}";
         }
 
         private static IEnumerable<object> GetKey(object instance)
@@ -98,20 +157,23 @@ namespace Masasamjant.Auditing
             }
         }
 
-        private static string CreateKeyValue(string name, IEnumerable<object> keys)
+        private static string GetTypeKey(IEnumerable<object> keys)
         {
-            var builder = new StringBuilder(name);
+            var builder = new StringBuilder();
             builder.Append('(');
-            
             foreach (var key in keys)
             {
                 var s = key.ToString() ?? string.Empty;
                 builder.Append(s).Append(',');
             }
-
             var value = builder.ToString().TrimEnd(',');
-
             return value + ")";
+        }
+
+        private static string CreateKeyValue(string typeName, string typeKey)
+        {
+            var provider = new Base64SHA256Provider();
+            return provider.CreateHash(typeName + typeKey);
         }
 
         private static string GetTypeName(Type type)

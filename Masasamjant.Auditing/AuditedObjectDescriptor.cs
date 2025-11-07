@@ -9,6 +9,8 @@ namespace Masasamjant.Auditing
     /// </summary>
     public class AuditedObjectDescriptor
     {
+        private List<AuditedPropertyDescriptor> properties = new List<AuditedPropertyDescriptor>();
+
         /// <summary>
         /// Initializes new instance of the <see cref="AuditedObjectDescriptor"/> class with specified object key and properties.
         /// </summary>
@@ -20,11 +22,12 @@ namespace Masasamjant.Auditing
             if (key.IsEmpty)
                 throw new ArgumentException("The object key cannot be empty.", nameof(key));
 
+            Identifier = Guid.NewGuid();
             ObjectKey = key;
             
             if (properties != null && properties.Any())
             {
-                Properties.AddRange(properties);
+                this.properties.AddRange(properties);
             }
         }
 
@@ -38,7 +41,7 @@ namespace Masasamjant.Auditing
         /// Gets the unique identifier.
         /// </summary>
         [JsonIgnore]
-        public Guid Identifier { get; internal set; } = Guid.NewGuid();
+        public Guid Identifier { get; internal set; }
 
         /// <summary>
         /// Gets the <see cref="AuditedObjectKey"/> of audited object instance.
@@ -50,7 +53,11 @@ namespace Masasamjant.Auditing
         /// Gets the audited properties.
         /// </summary>
         [JsonInclude]
-        public List<AuditedPropertyDescriptor> Properties { get; internal set; } = new List<AuditedPropertyDescriptor>();
+        public IReadOnlyCollection<AuditedPropertyDescriptor> Properties
+        {
+            get { return properties.AsReadOnly(); }
+            internal set { properties = value.ToList(); }
+        }
 
         /// <summary>
         /// Gets whether or not this represents empty object descriptor.

@@ -13,12 +13,13 @@ namespace Masasamjant.Auditing
         /// <param name="propertyName">The property name.</param>
         /// <param name="propertyValue">The property value.</param>
         /// <param name="keyProperty"><c>true</c> if property is part of the audited object key; <c>false</c> otherwise.</param>
-        /// <exception cref="ArgumentException">If <paramref name="propertyName"/> is empty or only whitespace.</exception>
+        /// <exception cref="ArgumentNullException">If <paramref name="propertyName"/> is empty or only whitespace.</exception>
         public AuditedPropertyDescriptor(string propertyName, string? propertyValue, bool keyProperty)
         {
             if (string.IsNullOrWhiteSpace(propertyName))
-                throw new ArgumentException("The property name cannot be empty or whitespace.", nameof(propertyName));
+                throw new ArgumentNullException(nameof(propertyName), "The property name cannot be empty or whitespace.");
 
+            Identifier = Guid.NewGuid();
             PropertyName = propertyName;
             PropertyValue = propertyValue;
             IsKeyProperty = keyProperty;
@@ -34,7 +35,7 @@ namespace Masasamjant.Auditing
         /// Gets the unique identifier.
         /// </summary>
         [JsonIgnore]
-        public Guid Identifier { get; internal set; } = Guid.NewGuid();
+        public Guid Identifier { get; internal set; }
 
         /// <summary>
         /// Gets the property name.

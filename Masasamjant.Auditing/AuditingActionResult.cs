@@ -18,13 +18,13 @@
         /// <summary>
         /// Action failed due to a validation error or business rule violation.
         /// </summary>
-        /// <remarks>Like when attempy to insert duplicate information or user authentication failed because invalid cretendials.</remarks>
+        /// <remarks>Like when attempt to insert duplicate information or user authentication failed because invalid cretendials.</remarks>
         Failed = 2,
 
         /// <summary>
         /// Action faulted because of an exception or unexpected error.
         /// </summary>
-        /// <remarks>Like when external application not available in data import.</remarks>
+        /// <remarks>Like when no connection to database or external system.</remarks>
         Faulted = 3
     }
 }

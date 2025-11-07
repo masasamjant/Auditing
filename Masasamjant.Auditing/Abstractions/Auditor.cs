@@ -7,7 +7,7 @@ namespace Masasamjant.Auditing.Abstractions
     /// </summary>
     public abstract class Auditor : IAuditor, IAuditingEventSource, IDisposable
     {
-        private readonly object lockSources = new object();
+        private readonly Lock lockSources = new Lock();
         private readonly List<IProvideAuditingEvent> sources = new List<IProvideAuditingEvent>();
         private readonly object lockQueue = new object();
         private Queue<AuditingEventArgs> queue = new Queue<AuditingEventArgs>();

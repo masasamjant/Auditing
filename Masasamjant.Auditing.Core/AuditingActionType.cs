@@ -51,12 +51,12 @@
         Merge = 8,
 
         /// <summary>
-        /// User authentication.
+        /// Authentication of an identity.
         /// </summary>
         Authentication = 9,
 
         /// <summary>
-        /// User authorizatio to perform action or access resources.
+        /// Authorization of an identity to perform action or access resources.
         /// </summary>
         Authorization = 10,
 

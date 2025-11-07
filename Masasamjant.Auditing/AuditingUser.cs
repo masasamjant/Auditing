@@ -23,6 +23,14 @@ namespace Masasamjant.Auditing
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="AuditingUser"/> class with user name.
+        /// </summary>
+        /// <exception cref="ArgumentException">If value of <paramref name="userType"/> is not defined.</exception>
+        public AuditingUser(string userName, AuditingUserType userType)
+            : this(string.Empty, userName, userType)
+        { }
+
+        /// <summary>
         /// Initializes new default instance of the <see cref="AuditingUser"/> class that represents an anonymous user.
         /// </summary>
         public AuditingUser()
@@ -70,6 +78,13 @@ namespace Masasamjant.Auditing
         public static AuditingUser HumanUser(string userIdentifier, string userName) => new AuditingUser(userIdentifier, userName, AuditingUserType.Human);
 
         /// <summary>
+        /// Creates <see cref="AuditingUser"/> that represents human user.
+        /// </summary>
+        /// <param name="userName">The user name.</param>
+        /// <returns>A <see cref="AuditingUser"/> that represents human user.</returns>
+        public static AuditingUser HumanUser(string userName) => new AuditingUser(userName, AuditingUserType.Human);
+
+        /// <summary>
         /// Creates <see cref="AuditingUser"/> that represents system user.
         /// </summary>
         /// <param name="userIdentifier">The user identifier as string.</param>
@@ -78,11 +93,26 @@ namespace Masasamjant.Auditing
         public static AuditingUser SystemUser(string userIdentifier, string userName) => new AuditingUser(userIdentifier, userName, AuditingUserType.System);
 
         /// <summary>
+        /// Creates <see cref="AuditingUser"/> that represents system user.
+        /// </summary>
+        /// <param name="userIdentifier">The user identifier as string.</param>
+        /// <param name="userName">The user name.</param>
+        /// <returns>A <see cref="AuditingUser"/> that represents system user.</returns>
+        public static AuditingUser SystemUser(string userName) => new AuditingUser(userName, AuditingUserType.System);
+
+        /// <summary>
         /// Creates <see cref="AuditingUser"/> that represents unknown user. This should be case when it's not clear if user is human or system.
         /// </summary>
         /// <param name="userIdentifier">The user identifier as string.</param>
         /// <param name="userName">The user name.</param>
         /// <returns>A <see cref="AuditingUser"/> that represents unknown user.</returns>
         public static AuditingUser UnknownUser(string userIdentifier, string userName) => new AuditingUser(userIdentifier, userName, AuditingUserType.Unknown);
+
+        /// <summary>
+        /// Creates <see cref="AuditingUser"/> that represents unknown user. This should be case when it's not clear if user is human or system.
+        /// </summary>
+        /// <param name="userName">The user name.</param>
+        /// <returns>A <see cref="AuditingUser"/> that represents unknown user.</returns>
+        public static AuditingUser UnknownUser(string userName) => new AuditingUser(userName, AuditingUserType.Unknown);
     }
 }

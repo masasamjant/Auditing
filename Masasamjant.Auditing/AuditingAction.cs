@@ -15,17 +15,12 @@ namespace Masasamjant.Auditing
         /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
         /// <param name="actionTime">The time when action occurred or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
         /// <param name="faultedMessage">The message that descibes why action faulted.</param>
-        /// <exception cref="ArgumentException">
-        /// If <paramref name="applicationName"/> is empty or only whitespace.
-        /// -or-
-        /// If value of <paramref name="actionType"/> is not defined.
-        /// -or-
-        /// If value of <paramref name="actionResult"/> is not defined.
-        /// </exception>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="applicationName"/> is empty or only whitespace.</exception>
+        /// <exception cref="ArgumentException">If value of <paramref name="actionType"/> or <paramref name="actionResult"/> is not defined.</exception>
         public AuditingAction(string applicationName, AuditingActionType actionType, AuditingActionResult actionResult, DateTimeOffset? actionTime = null, string? faultedMessage = null) 
         {
             if (string.IsNullOrWhiteSpace(applicationName))
-                throw new ArgumentException("The application name cannot be empty or whitespace.", nameof(applicationName));
+                throw new ArgumentNullException(nameof(applicationName), "The application name cannot be empty or whitespace.");
 
             if (!Enum.IsDefined(actionType))
                 throw new ArgumentException("The value is not defined.", nameof(actionType));
@@ -49,20 +44,15 @@ namespace Masasamjant.Auditing
         /// <param name="actionResult">The <see cref="AuditingActionResult"/>.</param>
         /// <param name="actionTime">The time when action occurred or <c>null</c> to use <see cref="DateTimeOffset.UtcNow"/>.</param>
         /// <param name="faultedMessage">The message that descibes why action faulted.</param>
-        /// <exception cref="ArgumentException">
-        /// If <paramref name="applicationName"/> is empty or only whitespace.
-        /// -or-
-        /// If value of <paramref name="actionType"/> is not defined.
-        /// -or-
-        /// If value of <paramref name="actionResult"/> is not defined.
-        /// </exception>
+        /// <exception cref="ArgumentNullException">If value of <paramref name="applicationName"/> or <paramref name="actionName"/> is empty or only whitespace.</exception>
+        /// <exception cref="ArgumentException">If value of <paramref name="actionResult"/> is not defined.</exception>
         public AuditingAction(string applicationName, string actionName, AuditingActionResult actionResult, DateTimeOffset? actionTime = null, string? faultedMessage = null)
         {
             if (string.IsNullOrWhiteSpace(applicationName))
-                throw new ArgumentException("The application name cannot be empty or whitespace.", nameof(applicationName));
+                throw new ArgumentNullException(nameof(applicationName), "The application name cannot be empty or whitespace.");
 
             if (string.IsNullOrWhiteSpace(actionName))
-                throw new ArgumentException("The action name cannot be empty or whitespace.", nameof(actionName));
+                throw new ArgumentNullException(nameof(actionName), "The action name cannot be empty or whitespace.");
 
             if (!Enum.IsDefined(actionResult))
                 throw new ArgumentException("The value is not defined.", nameof(actionResult));
