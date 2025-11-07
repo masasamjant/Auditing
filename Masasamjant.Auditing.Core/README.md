@@ -1,0 +1,2 @@
+# Auditing Framework
+This is the minimal any audited object must reference to use this auditing framework. Objects that should be audited must decorate audited properties with AuditedPropertyAttribute.
