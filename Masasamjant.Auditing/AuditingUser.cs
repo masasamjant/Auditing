@@ -7,8 +7,6 @@ namespace Masasamjant.Auditing
     /// </summary>
     public class AuditingUser
     {
-        private const string AnonumousUserName = "Anonymous";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AuditingUser"/> class with specified user identifier and user name.
         /// </summary>
@@ -18,8 +16,8 @@ namespace Masasamjant.Auditing
             if (!Enum.IsDefined(userType))
                 throw new ArgumentException("The value is not defined.", nameof(userType));
 
-            UserIdentifier = userIdentifier.Trim();
-            UserName = string.IsNullOrEmpty(UserIdentifier) ? AnonumousUserName : userName;
+            UserIdentifier = userIdentifier;
+            UserName = userName;
         }
 
         /// <summary>
@@ -46,7 +44,7 @@ namespace Masasamjant.Auditing
         /// Gets the user name as string.
         /// </summary>
         [JsonInclude]
-        public string UserName { get; internal set; } = AnonumousUserName;
+        public string UserName { get; internal set; } = string.Empty;
 
         /// <summary>
         /// Gets the type of the user.
@@ -57,10 +55,12 @@ namespace Masasamjant.Auditing
         /// <summary>
         /// Gets whether or not this represents anonymous user.
         /// </summary>
+        /// <remarks><c>true</c> if <see cref="UserIdentifier"/> and <see cref="UserName"/> are both empty or only whitespace; <c>false</c> otherwise.</remarks>
         [JsonIgnore]
         public bool IsAnonymous 
         {
-            get { return string.IsNullOrEmpty(UserIdentifier) && UserName == AnonumousUserName; }
+            get { return string.IsNullOrWhiteSpace(UserIdentifier) 
+                    && string.IsNullOrWhiteSpace(UserName); }
         }
 
         /// <summary>

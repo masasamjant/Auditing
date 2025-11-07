@@ -8,6 +8,8 @@ namespace Masasamjant.Auditing
     /// </summary>
     public class AuditingEvent
     {
+        private List<AuditedObjectDescriptor> objects = new List<AuditedObjectDescriptor>();
+
         /// <summary>
         /// Intializes a new instance of the <see cref="AuditingEvent"/> class with single autited object.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Masasamjant.Auditing
             Action = eventAction;
             User = eventUser;
             if (auditedObjects.Any())
-                AuditedObjects.AddRange(auditedObjects);
+                objects.AddRange(auditedObjects);
         }
 
         /// <summary>
@@ -69,7 +71,11 @@ namespace Masasamjant.Auditing
         /// Gets the list of <see cref="AuditedObjectDescriptor"/> that represent the objects involved in the action.
         /// </summary>
         [JsonInclude]
-        public List<AuditedObjectDescriptor> AuditedObjects { get; internal set; } = new List<AuditedObjectDescriptor>();
+        public IReadOnlyCollection<AuditedObjectDescriptor> AuditedObjects
+        {
+            get { return objects.AsReadOnly(); }
+            internal set { objects = value.ToList(); }
+        }
 
         /// <summary>
         /// Creates <see cref="AuditingEvent"/> for specified audited object instance.
