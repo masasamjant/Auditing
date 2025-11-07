@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace Masasamjant.Auditing
 {
@@ -55,6 +51,39 @@ namespace Masasamjant.Auditing
             Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("  ", AuditingActionType.Update, AuditingActionResult.Succeeded));
             Assert.ThrowsException<ArgumentException>(() => new AuditingAction("App", (AuditingActionType)999, AuditingActionResult.Succeeded));
             Assert.ThrowsException<ArgumentException>(() => new AuditingAction("App", AuditingActionType.Update, (AuditingActionResult)999));
+            var actionTime = DateTimeOffset.UtcNow.AddMinutes(20);
+
+            var action = new AuditingAction("App", AuditingActionType.Update, AuditingActionResult.Succeeded, actionTime, "Foo");
+            Assert.AreEqual("App", action.ApplicationName);
+            Assert.AreEqual("Update", action.ActionName);
+            Assert.AreEqual(actionTime, action.ActionTime);
+            Assert.AreEqual(AuditingActionType.Update, action.ActionType);
+            Assert.AreEqual(AuditingActionResult.Succeeded, action.ActionResult);
+            Assert.IsNull(action.FaultedMessage);
+
+            action = new AuditingAction("App", AuditingActionType.Update, AuditingActionResult.Faulted, actionTime, "Foo");
+            Assert.AreEqual("App", action.ApplicationName);
+            Assert.AreEqual("Update", action.ActionName);
+            Assert.AreEqual(actionTime, action.ActionTime);
+            Assert.AreEqual(AuditingActionType.Update, action.ActionType);
+            Assert.AreEqual(AuditingActionResult.Faulted, action.ActionResult);
+            Assert.AreEqual("Foo", action.FaultedMessage);
+        }
+
+        [TestMethod]
+        public void Test_Serialization()
+        {
+            var actionTime = DateTimeOffset.UtcNow.AddMinutes(20);
+            var action = new AuditingAction("App", AuditingActionType.Update, AuditingActionResult.Faulted, actionTime, "Foo");
+            var json = JsonSerializer.Serialize(action);
+            var other = JsonSerializer.Deserialize<AuditingAction>(json);
+            Assert.IsNotNull(other);
+            Assert.AreEqual(action.ApplicationName, other.ApplicationName);
+            Assert.AreEqual(action.ActionName, other.ActionName);
+            Assert.AreEqual(action.ActionTime, other.ActionTime);
+            Assert.AreEqual(action.ActionType, other.ActionType);
+            Assert.AreEqual(action.ActionResult, other.ActionResult);
+            Assert.AreEqual(action.FaultedMessage, other.FaultedMessage);
         }
     }
 }
