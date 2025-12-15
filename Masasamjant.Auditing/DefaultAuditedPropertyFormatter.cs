@@ -33,6 +33,9 @@ namespace Masasamjant.Auditing
             if (value == null)
                 return null;
 
+            if (value is string s)
+                return s;
+
             if (value is IEnumerable enumerable)
                 return enumerableFormatter.Format(enumerable);
 
