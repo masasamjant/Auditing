@@ -36,7 +36,7 @@ namespace Masasamjant.Auditing
         [TestMethod]
         public void Test_Constructor()
         {
-            Assert.ThrowsException<ArgumentException>(() => new AuditedObjectKey(new object()));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditedObjectKey(new object()));
             
             var person = new Person();
             var key = new AuditedObjectKey(person);

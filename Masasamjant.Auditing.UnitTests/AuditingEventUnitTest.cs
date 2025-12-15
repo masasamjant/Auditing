@@ -14,7 +14,7 @@ namespace Masasamjant.Auditing
             Assert.AreEqual(string.Empty, auditingEvent.User.UserName);
             Assert.AreEqual(AuditingUserType.Unknown, auditingEvent.User.UserType);
             Assert.IsTrue(auditingEvent.User.IsAnonymous);
-            Assert.AreEqual(0, auditingEvent.AuditedObjects.Count);
+            Assert.IsEmpty(auditingEvent.AuditedObjects);
             Assert.AreEqual(string.Empty, auditingEvent.Action.ApplicationName);
             Assert.AreEqual("Unknown", auditingEvent.Action.ActionName);
             Assert.AreEqual(default(DateTimeOffset), auditingEvent.Action.ActionTime);
@@ -35,7 +35,7 @@ namespace Masasamjant.Auditing
             {
                 descriptor
             };
-            Assert.ThrowsException<ArgumentException>(() => new AuditingEvent(Guid.Empty, eventAction, eventUser, auditedObjects));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditingEvent(Guid.Empty, eventAction, eventUser, auditedObjects));
             var auditingEvent = new AuditingEvent(Guid.NewGuid(), eventAction, eventUser, auditedObjects);
             Assert.IsTrue(ReferenceEquals(eventAction, auditingEvent.Action));
             Assert.IsTrue(ReferenceEquals(eventUser, auditingEvent.User));
@@ -67,8 +67,8 @@ namespace Masasamjant.Auditing
             Assert.AreEqual(auditingEvent.Action.ActionTime, other.Action.ActionTime);
             Assert.AreEqual(auditingEvent.Action.ActionType, other.Action.ActionType);
             Assert.AreEqual(auditingEvent.Action.ActionResult, other.Action.ActionResult);
-            Assert.AreEqual(1, other.AuditedObjects.Count);
-            Assert.AreEqual(auditingEvent.AuditedObjects.Count, other.AuditedObjects.Count);
+            Assert.HasCount(1, other.AuditedObjects);
+            Assert.HasCount(auditingEvent.AuditedObjects.Count, other.AuditedObjects);
             Assert.AreEqual(descriptor.ObjectKey, other.AuditedObjects.First().ObjectKey);
         }
 
@@ -95,8 +95,8 @@ namespace Masasamjant.Auditing
             Assert.AreEqual(auditingEvent.Action.ActionName, other.Action.ActionName);
             Assert.AreEqual(auditingEvent.Action.ActionType, other.Action.ActionType);
             Assert.AreEqual(auditingEvent.Action.ActionResult, other.Action.ActionResult);
-            Assert.AreEqual(1, other.AuditedObjects.Count);
-            Assert.AreEqual(auditingEvent.AuditedObjects.Count, other.AuditedObjects.Count);
+            Assert.HasCount(1, other.AuditedObjects);
+            Assert.HasCount(auditingEvent.AuditedObjects.Count, other.AuditedObjects);
             Assert.AreEqual(descriptor.ObjectKey, other.AuditedObjects.First().ObjectKey);
 
             other = AuditingEvent.CreateForOne(person, "App", AuditingActionType.Update, AuditingActionResult.Succeeded, eventUser);
@@ -108,8 +108,8 @@ namespace Masasamjant.Auditing
             Assert.AreEqual(auditingEvent.Action.ActionName, other.Action.ActionName);
             Assert.AreEqual(auditingEvent.Action.ActionType, other.Action.ActionType);
             Assert.AreEqual(auditingEvent.Action.ActionResult, other.Action.ActionResult);
-            Assert.AreEqual(1, other.AuditedObjects.Count);
-            Assert.AreEqual(auditingEvent.AuditedObjects.Count, other.AuditedObjects.Count);
+            Assert.HasCount(1, other.AuditedObjects);
+            Assert.HasCount(auditingEvent.AuditedObjects.Count, other.AuditedObjects);
             Assert.AreEqual(descriptor.ObjectKey, other.AuditedObjects.First().ObjectKey);
         }
 
@@ -142,8 +142,8 @@ namespace Masasamjant.Auditing
             Assert.AreEqual(auditingEvent.Action.ActionName, other.Action.ActionName);
             Assert.AreEqual(auditingEvent.Action.ActionType, other.Action.ActionType);
             Assert.AreEqual(auditingEvent.Action.ActionResult, other.Action.ActionResult);
-            Assert.AreEqual(2, other.AuditedObjects.Count);
-            Assert.AreEqual(auditingEvent.AuditedObjects.Count, other.AuditedObjects.Count);
+            Assert.HasCount(2, other.AuditedObjects);
+            Assert.HasCount(auditingEvent.AuditedObjects.Count, other.AuditedObjects);
             Assert.AreEqual(personDescriptor.ObjectKey, other.AuditedObjects.First().ObjectKey);
             Assert.AreEqual(addressDescriptor.ObjectKey, other.AuditedObjects.Last().ObjectKey);
         }

@@ -20,11 +20,11 @@ namespace Masasamjant.Auditing
         [TestMethod]
         public void Test_ActionName_Constructor()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("", "Update", AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("  ", "Update", AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("App", "", AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("App", "  ", AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentException>(() => new AuditingAction("App", "Update", (AuditingActionResult)999));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("", "Update", AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("  ", "Update", AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("App", "", AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("App", "  ", AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditingAction("App", "Update", (AuditingActionResult)999));
             var actionTime = DateTimeOffset.UtcNow.AddMinutes(20);
 
             var action = new AuditingAction("App", "Update", AuditingActionResult.Succeeded, actionTime, "Foo");
@@ -47,10 +47,10 @@ namespace Masasamjant.Auditing
         [TestMethod]
         public void Test_ActionType_Constructor()
         {
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("", AuditingActionType.Update, AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditingAction("  ", AuditingActionType.Update, AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentException>(() => new AuditingAction("App", (AuditingActionType)999, AuditingActionResult.Succeeded));
-            Assert.ThrowsException<ArgumentException>(() => new AuditingAction("App", AuditingActionType.Update, (AuditingActionResult)999));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("", AuditingActionType.Update, AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditingAction("  ", AuditingActionType.Update, AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditingAction("App", (AuditingActionType)999, AuditingActionResult.Succeeded));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditingAction("App", AuditingActionType.Update, (AuditingActionResult)999));
             var actionTime = DateTimeOffset.UtcNow.AddMinutes(20);
 
             var action = new AuditingAction("App", AuditingActionType.Update, AuditingActionResult.Succeeded, actionTime, "Foo");

@@ -10,7 +10,7 @@ namespace Masasamjant.Auditing
         {
             var descriptor = new AuditedPropertyDescriptor();
             Assert.AreEqual(Guid.Empty, descriptor.Identifier);
-            Assert.AreEqual(false, descriptor.IsKeyProperty);
+            Assert.IsFalse(descriptor.IsKeyProperty);
             Assert.AreEqual(string.Empty, descriptor.PropertyName);
             Assert.IsNull(descriptor.PropertyValue);
         }
@@ -20,18 +20,17 @@ namespace Masasamjant.Auditing
         {
             var descriptor = new AuditedPropertyDescriptor("Name", "Value", true);
             Assert.AreNotEqual(Guid.Empty, descriptor.Identifier);
-            Assert.AreEqual(true, descriptor.IsKeyProperty);
+            Assert.IsTrue(descriptor.IsKeyProperty);
             Assert.AreEqual("Name", descriptor.PropertyName);
             Assert.AreEqual("Value", descriptor.PropertyValue);
 
             descriptor = new AuditedPropertyDescriptor("Name", null, false);
             Assert.AreNotEqual(Guid.Empty, descriptor.Identifier);
-            Assert.AreEqual(false, descriptor.IsKeyProperty);
+            Assert.IsFalse(descriptor.IsKeyProperty);
             Assert.AreEqual("Name", descriptor.PropertyName);
             Assert.IsNull(descriptor.PropertyValue);
-
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditedPropertyDescriptor("", null, false));
-            Assert.ThrowsException<ArgumentNullException>(() => new AuditedPropertyDescriptor("  ", null, false));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditedPropertyDescriptor("", null, false));
+            Assert.ThrowsExactly<ArgumentNullException>(() => new AuditedPropertyDescriptor("  ", null, false));
         }
 
         [TestMethod]

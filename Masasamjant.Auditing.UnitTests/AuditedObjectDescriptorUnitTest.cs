@@ -12,25 +12,25 @@ namespace Masasamjant.Auditing
             Assert.IsTrue(descriptor.ObjectKey.IsEmpty);
             Assert.IsTrue(descriptor.IsEmpty);
             Assert.AreEqual(Guid.Empty, descriptor.Identifier);
-            Assert.AreEqual(0, descriptor.Properties.Count);
+            Assert.IsEmpty(descriptor.Properties);
         }
 
         [TestMethod]
         public void Test_Constructor()
         {
             IEnumerable<AuditedPropertyDescriptor>? properties = null;
-            Assert.ThrowsException<ArgumentException>(() => new AuditedObjectDescriptor(new AuditedObjectKey(), properties));
+            Assert.ThrowsExactly<ArgumentException>(() => new AuditedObjectDescriptor(new AuditedObjectKey(), properties));
             var person = new Person();
             var key = new AuditedObjectKey(person);
             var descriptor = new AuditedObjectDescriptor(new AuditedObjectKey(person), properties);
             Assert.AreNotEqual(Guid.Empty, descriptor.Identifier);
             Assert.IsFalse(descriptor.IsEmpty);
             Assert.AreEqual(key, descriptor.ObjectKey);
-            Assert.AreEqual(0, descriptor.Properties.Count);
+            Assert.IsEmpty(descriptor.Properties);
             var property = new AuditedPropertyDescriptor(nameof(person.FirstName), person.FirstName, false);
             properties = new List<AuditedPropertyDescriptor>() { property };
             descriptor = new AuditedObjectDescriptor(new AuditedObjectKey(person), properties);
-            Assert.AreEqual(1, descriptor.Properties.Count);
+            Assert.HasCount(1, descriptor.Properties);
             Assert.IsTrue(descriptor.Properties.Contains(property));
         }
 
@@ -45,7 +45,7 @@ namespace Masasamjant.Auditing
             var other = JsonSerializer.Deserialize<AuditedObjectDescriptor>(json);
             Assert.IsNotNull(other);
             Assert.AreEqual(descriptor.ObjectKey, other.ObjectKey);
-            Assert.AreEqual(descriptor.Properties.Count, other.Properties.Count);
+            Assert.HasCount(descriptor.Properties.Count, other.Properties);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace Masasamjant.Auditing
             var descriptor = new AuditedObjectDescriptor(new AuditedObjectKey(person), properties);
             var other = AuditedObjectDescriptor.Create(person, AuditingActionType.Print);
             Assert.AreEqual(descriptor.ObjectKey, other.ObjectKey);
-            Assert.AreEqual(descriptor.Properties.Count, other.Properties.Count);
+            Assert.HasCount(descriptor.Properties.Count, other.Properties);
             Assert.IsTrue(descriptor.Properties.Any(x => x.IsKeyProperty == true));
             Assert.IsTrue(descriptor.Properties.Any(x => x.PropertyName == "Identifier"));
             Assert.IsTrue(descriptor.Properties.Any(x => x.PropertyValue == person.Identifier.ToString()));
